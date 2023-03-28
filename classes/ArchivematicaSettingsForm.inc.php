@@ -35,7 +35,8 @@
      * Asign content for each field
      */
     public function initData() {
-      $contextId = $context = Request::getContext()->getId();
+      $contextId = Application::get()->getRequest()->getContext()->getId();
+      //$contextId = $context = Request::getContext()->getId();
       $this->setData('ArchivematicaStorageServiceUrl', $this->plugin->getSetting($contextId, 'ArchivematicaStorageServiceUrl'));
       $this->setData('ArchivematicaStorageServiceSpaceUUID', $this->plugin->getSetting($contextId, 'ArchivematicaStorageServiceSpaceUUID'));
       $this->setData('ArchivematicaStorageServiceUser', $this->plugin->getSetting($contextId, 'ArchivematicaStorageServiceUser'));
@@ -68,7 +69,7 @@
     /**
      * Save settings
      */
-    public function execute() {
+    public function execute(...$functionArgs) {
       $contextId = $context = Request::getContext()->getId();
       $this->plugin->updateSetting($contextId, 'ArchivematicaStorageServiceUrl', $this->getData('ArchivematicaStorageServiceUrl'));
       $this->plugin->updateSetting($contextId, 'ArchivematicaStorageServiceSpaceUUID', $this->getData('ArchivematicaStorageServiceSpaceUUID'));

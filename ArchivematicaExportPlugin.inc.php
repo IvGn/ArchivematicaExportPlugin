@@ -20,7 +20,7 @@ class ArchivematicaExportPlugin extends ImportExportPlugin {
 	/**
 	 * @copydoc Plugin::register()
 	 */
-	function register($category, $path, $mainContextId = null) {
+	/*function register($category, $path, $mainContextId = null) {
 		AppLocale::requireComponents(LOCALE_COMPONENT_APP_COMMON,
 			LOCALE_COMPONENT_APP_SUBMISSION,
 			LOCALE_COMPONENT_PKP_SUBMISSION);
@@ -29,32 +29,43 @@ class ArchivematicaExportPlugin extends ImportExportPlugin {
 		$this->addLocaleData();
 
 		return $success;
+	}*/
+	public function register($category, $path, $mainContextId = NULL) {
+		AppLocale::requireComponents(LOCALE_COMPONENT_APP_COMMON,
+			LOCALE_COMPONENT_APP_SUBMISSION,
+			LOCALE_COMPONENT_APP_AUTHOR,
+			LOCALE_COMPONENT_APP_EDITOR,
+			LOCALE_COMPONENT_PKP_SUBMISSION);
+
+		$success = parent::register($category, $path, $mainContextId);
+		$this->addLocaleData();
+
+		return $success;
 	}
 
+
 	/**
-	 * Get the name of this plugin. The name must be unique within
-	 * its category.
-	 * @return String name of plugin
+	 * @copydoc Plugin::getName()
 	 */
-	function getName() {
+	public function getName() {
 		return 'ArchivematicaExportPlugin';
 	}
 
 	/**
-	 * Get the display name.
-	 * @return string
+	 * @copydoc Plugin::getDisplayName()
 	 */
-	function getDisplayName() {
-		return __('plugins.importexport.archivematica.displayName');
+	public function getDisplayName() {
+		return __('plugins.importexport.ArchivematicaExportPlugin.displayName');
 	}
 
 	/**
-	 * Get the display description.
-	 * @return string
+	 * @copydoc Plugin::getDescription()
 	 */
-	function getDescription() {
-		return __('plugins.importexport.archivematica.description');
+	public function getDescription() {
+		return __('plugins.importexport.ArchivematicaExportPlugin.description');
 	}
+
+	
 
 
 	/**
@@ -76,22 +87,35 @@ class ArchivematicaExportPlugin extends ImportExportPlugin {
 
 		parent::display($args, $request);
 		$templateMgr = TemplateManager::getManager($request);
-		$journal = $request->getJournal();
+		//$journal = $request->getJournal();
+		$context = $request->getContext();
 		$this->context = $request->getContext();
 		$this->request = $request;
 
 		switch (array_shift($args)) {
 			case 'index': //Index page
 			case '':
-			import('lib.pkp.controllers.list.submissions.SelectSubmissionsListHandler');
+				$apiUrl = $request->getDispatcher()->url($request, ROUTE_API, $context->getPath(), 'submissions');
+				$submissionsListPanel = new \APP\components\listPanels\SubmissionsListPanel(
+					'submissions',
+					__('common.publications'),
+					[
+						'apiUrl' => $apiUrl,
+						'count' => 100,
+						'getParams' => new stdClass(),
+						'lazyLoad' => true,
+					]
+				);
+			/*import('lib.pkp.controllers.list.submissions.SelectSubmissionsListHandler');
 			$exportSubmissionsListHandler = new SelectSubmissionsListHandler(array(
 				'title' => 'plugins.importexport.native.exportSubmissionsSelect',
 				'count' => 100,
 				'inputName' => 'selectedSubmissions[]',
-			));
+			));*/
 
 			$templateMgr->assign('pluginName', $this->getName());
-			$templateMgr->assign('exportSubmissionsListData', json_encode($exportSubmissionsListHandler->getConfig()));
+			//$templateMgr->assign('exportSubmissionsListData', json_encode($exportSubmissionsListHandler->getConfig()));
+			$templateMgr->assign('submissionsListPanel', json_encode($submissionsListPanel->getConfig()));
 			$templateMgr->display($this->getTemplateResource('exportPage.tpl'));
 			break;
 
@@ -281,11 +305,12 @@ class ArchivematicaExportPlugin extends ImportExportPlugin {
 	 * Get deposited files from storage service by IssueId
 	 * @return JSON String
 	 */
+	
 	function getDepositedFilesByIsisueId($issueId){
 		$publishedArticleDao = DAORegistry::getDAO('PublishedArticleDAO');
-
-		$result = $publishedArticleDao->retrieve('SELECT COUNT(*) FROM published_submissions ps INNER JOIN submission_settings ss ON ss.submission_id = ps.submission_id WHERE ps.issue_id = ? AND ss.setting_name = ? ', array($issueId, 'depositUUID'));
-		$count = $result->fields[0];
+		$count = 4;
+		//$result = $publishedArticleDao->retrieve('SELECT COUNT(*) FROM published_submissions ps INNER JOIN submission_settings ss ON ss.submission_id = ps.submission_id WHERE ps.issue_id = ? AND ss.setting_name = ? ', array($issueId, 'depositUUID'));
+		//$count = $result->fields[0];
 		return $count;
 	}
 
@@ -549,5 +574,4 @@ class ArchivematicaExportPlugin extends ImportExportPlugin {
     	$this->usage($scriptName);
     }
 }
-
 

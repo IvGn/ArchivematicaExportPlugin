@@ -8,7 +8,7 @@
  */
 
 import('plugins.generic.sword.classes.OJSSwordDeposit');
-import('plugins.importexport.archivematica.classes.PackageWrapper');
+import('plugins.importexport.ArchivematicaExportPlugin.classes.PackageWrapper');
 
 class DepositWrapper extends OJSSwordDeposit{
 
@@ -85,7 +85,7 @@ class DepositWrapper extends OJSSwordDeposit{
 				$package->sac_root_in . '/' . $package->sac_dir_in . '/' . $package->sac_metadata_filename . ")");
 		}
 
-		$label = 'journalId-' .  $submission->getData("journalId") . '--' .'issueId-' .  $submission->getData("issueId") . '--' . 'articleId-' . $submission->getData("id");
+		$label = 'BS-journalId-' .  $submission->getData("journalId") . '--' .'issueId-' .  $submission->getData("issueId") . '--' . 'articleId-' . $submission->getData("id");
 		$package->setLabel($label);
 		$package->writeHeader($fh);
 		$package->writeDmdSec($fh);
