@@ -1,4 +1,4 @@
-# Archivematica Export plugin
+# Module Digital Preservation (MDP) plugin for Open Journal Systems (OJS)
 
 This plugin allows you to export articles or full numbers from OJS to an installation of Archivematica preservation software.
 
